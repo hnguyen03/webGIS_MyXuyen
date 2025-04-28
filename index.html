@@ -11,11 +11,54 @@
       height: 100vh;
       width: 100%;
     }
+
+    /* Định dạng cho legend */
+    #legend {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+    }
+
+    .legend-item {
+      margin: 5px 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .legend-color-box {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+    }
   </style>
 </head>
 <body>
 
 <div id="map"></div>
+
+<!-- Legend Mật độ dân số -->
+<div id="legend">
+  <h4>Legend - Mật độ dân số</h4>
+  <div class="legend-item">
+    <div class="legend-color-box" style="background-color: #f7f7f7;"></div> 0 - 50
+  </div>
+  <div class="legend-item">
+    <div class="legend-color-box" style="background-color: #e0e0e0;"></div> 51 - 200
+  </div>
+  <div class="legend-item">
+    <div class="legend-color-box" style="background-color: #c0c0c0;"></div> 201 - 500
+  </div>
+  <div class="legend-item">
+    <div class="legend-color-box" style="background-color: #909090;"></div> 501 - 1000
+  </div>
+  <div class="legend-item">
+    <div class="legend-color-box" style="background-color: #606060;"></div> 1001+
+  </div>
+</div>
 
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script>
@@ -33,11 +76,17 @@
     .then(response => response.json())
     .then(data => {
       var geojsonLayer = L.geoJSON(data, {
-        style: {
-          color: 'blue',
-          fillColor: 'aqua',
-          fillOpacity: 0.5,
-          weight: 2
+        style: function (feature) {
+          // Lấy mật độ dân số từ thuộc tính của GeoJSON và thay đổi màu sắc theo đó
+          var density = feature.properties.density || 0;  // Giả sử mật độ dân số có trong thuộc tính 'density'
+          var color = getColorByDensity(density);
+          
+          return {
+            color: 'blue',
+            fillColor: color,
+            fillOpacity: 0.6,
+            weight: 2
+          };
         },
         onEachFeature: function (feature, layer) {
           if (feature.properties) {
@@ -54,6 +103,15 @@
       map.fitBounds(geojsonLayer.getBounds());
     })
     .catch(error => console.error('Lỗi khi tải GeoJSON:', error));
+
+  // Hàm chọn màu sắc theo mật độ dân số
+  function getColorByDensity(density) {
+    if (density <= 50) return "#f7f7f7";
+    if (density <= 200) return "#e0e0e0";
+    if (density <= 500) return "#c0c0c0";
+    if (density <= 1000) return "#909090";
+    return "#606060";  // Màu cho mật độ dân số trên 1000 người/km²
+  }
 </script>
 
 </body>
