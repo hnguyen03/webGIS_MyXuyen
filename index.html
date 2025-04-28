@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>WebGIS - Mỹ Xuyên</title>
+  <title>webGIS Q2 Midterm2 - Student 2106080058</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+  <!-- Liên kết đến CSS của Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
   <style>
     #map {
@@ -34,10 +35,28 @@
       height: 20px;
       margin-right: 8px;
     }
+
+    /* Định dạng tiêu đề */
+    h1 {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      padding: 10px;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
 
+<!-- Tiêu đề trang -->
+<h1>webGIS Q2 Midterm2 - Student 2106080058</h1>
+<h2 style="position: absolute; top: 40px; left: 10px; background-color: rgba(255, 255, 255, 0.7); padding: 10px; font-family: Arial, sans-serif; font-size: 14px;">Study Area: Mỹ Xuyên, Sóc Trăng</h2>
+
+<!-- Div chứa bản đồ -->
 <div id="map"></div>
 
 <!-- Legend Mật độ dân số -->
@@ -62,8 +81,8 @@
 
 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 <script>
-  // Khởi tạo bản đồ tại vị trí gần Ho Bao Linh (có thể điều chỉnh toạ độ nếu cần)
-  var map = L.map('map').setView([21.2, 105.8], 13);
+  // Khởi tạo bản đồ tại vị trí gần Mỹ Xuyên, Sóc Trăng
+  var map = L.map('map').setView([9.2707, 105.8293], 13); // Toạ độ gần Mỹ Xuyên
 
   // Lớp bản đồ nền từ OSM
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -71,14 +90,14 @@
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // Load dữ liệu GeoJSON
-  fetch('WebGIS_MyXuyen.geojson')
+  // Load dữ liệu GeoJSON về các xã của Mỹ Xuyên
+  fetch('WebGIS_MyXuyen.geojson') // Thay bằng URL hoặc đường dẫn đến tệp GeoJSON của bạn
     .then(response => response.json())
     .then(data => {
       var geojsonLayer = L.geoJSON(data, {
         style: function (feature) {
-          // Lấy mật độ dân số từ thuộc tính của GeoJSON và thay đổi màu sắc theo đó
-          var density = feature.properties.density || 0;  // Giả sử mật độ dân số có trong thuộc tính 'density'
+          // Giả sử mật độ dân số là thuộc tính "population_density"
+          var density = feature.properties.population_density || 0;
           var color = getColorByDensity(density);
           
           return {
@@ -89,13 +108,16 @@
           };
         },
         onEachFeature: function (feature, layer) {
-          if (feature.properties) {
-            let popupContent = "<b>Thông tin đối tượng:</b><br>";
-            for (let key in feature.properties) {
-              popupContent += `${key}: ${feature.properties[key]}<br>`;
-            }
-            layer.bindPopup(popupContent);
-          }
+          // Thêm nhãn cho từng xã
+          var name = feature.properties.name; // Giả sử tên xã là "name"
+          layer.bindPopup("<b>" + name + "</b><br>Mật độ dân số: " + feature.properties.population_density + " người/km²");
+
+          // Hiển thị nhãn tên xã
+          layer.bindTooltip(feature.properties.name, {
+            permanent: true,
+            direction: 'center',
+            className: 'label'
+          });
         }
       }).addTo(map);
 
