@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web GIS - Population Density</title>
+    <!-- Thêm liên kết đến CSS của Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        /* Định dạng cho bản đồ */
+        #map {
+            width: 75%;
+            height: 100vh;
+            float: left;
+        }
+
+        /* Định dạng cho legend */
+        #legend {
+            width: 20%;
+            float: left;
+            margin-left: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+        }
+
+        .legend-item {
+            padding: 5px;
+        }
+
+        .legend-color-box {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Div chứa bản đồ -->
+    <div id="map"></div>
+
+    <!-- Div chứa legend -->
+    <div id="legend">
+        <h4>Population Density</h4>
+        <div class="legend-item">
+            <div class="legend-color-box" style="background-color: #f7f7f7;"></div> 0 - 50
+        </div>
+        <div class="legend-item">
+            <div class="legend-color-box" style="background-color: #e0e0e0;"></div> 51 - 200
+        </div>
+        <div class="legend-item">
+            <div class="legend-color-box" style="background-color: #c0c0c0;"></div> 201 - 500
+        </div>
+        <div class="legend-item">
+            <div class="legend-color-box" style="background-color: #909090;"></div> 501 - 1000
+        </div>
+        <div class="legend-item">
+            <div class="legend-color-box" style="background-color: #606060;"></div> 1001+
+        </div>
+    </div>
+
+    <!-- Thêm script Leaflet -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Thêm thư viện Leaflet.heat nếu sử dụng heatmap -->
+    <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+    <script>
+        // Khởi tạo bản đồ
+        var map = L.map('map').setView([14.0583, 108.2772], 6);  // Tọa độ của Việt Nam, bạn có thể thay đổi
+
+        // Thêm lớp bản đồ nền
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Dữ liệu ví dụ về mật độ dân số
+        // Đây là dữ liệu giả lập, bạn có thể thay thế bằng GeoJSON hoặc dữ liệu thực tế
+        var populationDensityData = [
+            {lat: 14.0583, lon: 108.2772, density: 30},  // ví dụ với mật độ dân số 30 người/km²
+            {lat: 15.0583, lon: 108.2772, density: 120},
+            {lat: 16.0583, lon: 108.2772, density: 450},
+            {lat: 17.0583, lon: 108.2772, density: 850},
+            {lat: 18.0583, lon: 108.2772, density: 1500}
+        ];
+
+        // Tạo heatmap (bản đồ nhiệt) hoặc dấu marker cho các vùng có mật độ dân số
+        populationDensityData.forEach(function(point) {
+            var color = getColorByDensity(point.density);  // Lấy màu theo mật độ dân số
+            L.circle([point.lat, point.lon], {
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.6,
+                radius: 50000  // Điều chỉnh bán kính vòng tròn
+            }).addTo(map);
+        });
+
+        // Hàm chọn màu sắc cho các vùng dựa trên mật độ dân số
+        function getColorByDensity(density) {
+            if (density <= 50) return "#f7f7f7";
+            if (density <= 200) return "#e0e0e0";
+            if (density <= 500) return "#c0c0c0";
+            if (density <= 1000) return "#909090";
+            return "#606060";
+        }
+    </script>
+</body>
+</html>
