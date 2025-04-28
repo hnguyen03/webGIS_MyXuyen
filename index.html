@@ -63,19 +63,16 @@
 <div id="legend">
   <h4>Legend - Mật độ dân số</h4>
   <div class="legend-item">
-    <div class="legend-color-box" style="background-color: #f1f1f1;"></div> 194 - 194
+    <div class="legend-color-box" style="background-color: #FFDDC1;"></div> < 200
   </div>
   <div class="legend-item">
-    <div class="legend-color-box" style="background-color: #e6c7c7;"></div> 194 - 259
+    <div class="legend-color-box" style="background-color: #FF6F61;"></div> 200 - 400
   </div>
   <div class="legend-item">
-    <div class="legend-color-box" style="background-color: #d49696;"></div> 259 - 430
+    <div class="legend-color-box" style="background-color: #D64B47;"></div> 400 - 700
   </div>
   <div class="legend-item">
-    <div class="legend-color-box" style="background-color: #c05c5c;"></div> 430 - 968
-  </div>
-  <div class="legend-item">
-    <div class="legend-color-box" style="background-color: #9e2121;"></div> 968 - 1768
+    <div class="legend-color-box" style="background-color: #9B1D1B;"></div> > 700
   </div>
 </div>
 
@@ -91,7 +88,7 @@
   }).addTo(map);
 
   // Load dữ liệu GeoJSON về các xã của Mỹ Xuyên
-  fetch('MyXuyen_commune.geojson') // Thay bằng URL hoặc đường dẫn đến tệp GeoJSON của bạn
+  fetch('WebGIS_MyXuyen.geojson') // Thay bằng URL hoặc đường dẫn đến tệp GeoJSON của bạn
     .then(response => response.json())
     .then(data => {
       var geojsonLayer = L.geoJSON(data, {
@@ -128,17 +125,14 @@
 
   // Hàm chọn màu sắc theo mật độ dân số (theo dải màu đỏ từ nhạt đến đậm)
   function getColorByDensity(density) {
-    if (density >= 194 && density <= 194) return "#f1f1f1"; // Màu nhạt nhất
-    if (density >= 195 && density <= 259) return "#e6c7c7";
-    if (density >= 260 && density <= 430) return "#d49696";
-    if (density >= 431 && density <= 968) return "#c05c5c";
-    if (density >= 969 && density <= 1768) return "#9e2121"; // Màu đậm nhất
-    return "#f1f1f1";  // Màu mặc định nếu không có mật độ phù hợp
+    if (density <= 200) return "#FFDDC1"; // Màu đỏ nhạt
+    if (density <= 400) return "#FF6F61"; // Màu đỏ vừa
+    if (density <= 700) return "#D64B47"; // Màu đỏ đậm nhẹ
+    return "#9B1D1B"; // Màu đỏ đậm mạnh
   }
 </script>
 
 </body>
 </html>
-
 </body>
 </html>
